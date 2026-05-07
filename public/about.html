@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void | Architecture</title>
+    <style>
+        :root { 
+            --bg: #000000; 
+            --surface: #0a0a0a; 
+            --border: #222222; 
+            --border-hover: #333333; 
+            --text: #ffffff; 
+            --text-dim: #777777; 
+            --accent: #ffffff; 
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+        
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+        
+        /* --- Navigation --- */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 3rem; border-bottom: 1px solid var(--border); }
+        .nav-brand { font-weight: 500; letter-spacing: 3px; font-size: 1rem; text-transform: uppercase; text-decoration: none; color: var(--text); }
+        
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-item { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s ease; }
+        .nav-item:hover { color: var(--text); }
+
+        /* --- Layout --- */
+        .container { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; padding: 4rem 2rem 6rem; display: flex; flex-direction: column; }
+        
+        /* --- Typography --- */
+        .hero { margin-bottom: 4rem; }
+        h1 { font-size: 3.5rem; font-weight: 300; letter-spacing: -1px; margin-bottom: 1rem; }
+        
+        .content-section { margin-bottom: 4rem; max-width: 750px; }
+        .content-section h2 { font-size: 1.5rem; font-weight: 400; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; letter-spacing: 0.5px; }
+        .content-section p { font-size: 1.05rem; line-height: 1.8; color: var(--text-dim); margin-bottom: 1.5rem; font-weight: 300; }
+        .content-section strong { color: var(--text); font-weight: 400; }
+
+        /* --- Tech Stack Section --- */
+        .tech-specs { border-top: 1px solid var(--border); padding-top: 4rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+        .spec-item { display: flex; flex-direction: column; gap: 0.5rem; }
+        .spec-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); }
+        .spec-value { font-family: 'Courier New', Courier, monospace; font-size: 1rem; color: var(--text); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="nav-brand">VOID.</a>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/about" class="nav-item" style="color: var(--text);">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Documentation.</h1>
+        </div>
+
+        <div class="content-section">
+            <h2>The Concept</h2>
+            <p>Moving raw code snippets, API responses, or JSON payloads between devices or team members is often a frustrating experience. Standard chat applications mangle formatting, and full-scale version control repositories are too heavy for temporary, ephemeral data.</p>
+            <p><strong>Void</strong> is built to solve this exact friction. It is designed as a frictionless, high-capacity scratchpad for developers. No user accounts, no persistent tracking, and no complex setup required.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>How It Works</h2>
+            <p>A user initializes a workspace by either generating a random 4-digit PIN or claiming a custom workspace ID. Any peer with this identifier can instantly connect to the same room.</p>
+            <p>Once inside, users can push up to tens of thousands of lines of code instantaneously into the room's payload log. The interface strictly preserves formatting, white-space, and indentation, making it easy to copy data exactly as it was pasted.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Data Lifecycle</h2>
+            <p>To prioritize speed and simplicity, the application bypasses traditional heavy database architectures. Instead, data is written locally to the active server's file system.</p>
+            <p>This allows active rooms and payload histories to survive temporary server interruptions. However, it remains lightweight enough that the environment can be completely wiped clean simply by refreshing the host instance's storage volume.</p>
+        </div>
+
+        <div class="tech-specs">
+            <div class="spec-item">
+                <span class="spec-label">Architecture</span>
+                <span class="spec-value">Multi-Page App (MPA)</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Backend</span>
+                <span class="spec-value">Node.js / Express</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Database</span>
+                <span class="spec-value">Local JSON File System</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-label">Frontend</span>
+                <span class="spec-value">Vanilla HTML / CSS / JS</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

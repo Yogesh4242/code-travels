@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void | Enter</title>
+    <style>
+        :root { --bg: #000000; --surface: #0a0a0a; --border: #222222; --border-hover: #333333; --text: #ffffff; --text-dim: #777777; --accent: #ffffff; --accent-fg: #000000; --error: #ff4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+        
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 3rem; }
+        .nav-brand { font-weight: 500; letter-spacing: 3px; font-size: 1rem; text-transform: uppercase; text-decoration: none; color: var(--text); }
+        .nav-item { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s ease; }
+        .nav-item:hover { color: var(--text); }
+
+        .container { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; display: flex; flex-direction: column; }
+        h1 { font-size: 3.5rem; font-weight: 300; letter-spacing: -1px; margin-bottom: 0.5rem; }
+        h3 { font-size: 1.5rem; font-weight: 400; margin-bottom: 0.5rem; }
+        p.subtitle { color: var(--text-dim); font-size: 1.1rem; margin-bottom: 3rem; font-weight: 300; }
+        p.card-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.5; }
+
+        .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .home-grid { grid-template-columns: 1fr; } h1 { font-size: 2.5rem; } }
+
+        .card { background: var(--surface); padding: 3rem 2.5rem; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; transition: border-color 0.3s ease; }
+        .card:hover { border-color: var(--border-hover); }
+
+        .input-group { margin-bottom: 2rem; position: relative; }
+        input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text); padding: 1rem 0; width: 100%; font-size: 1.1rem; outline: none; transition: border-color 0.3s ease; }
+        input::placeholder { color: #444; }
+        input:focus { border-bottom-color: var(--text); }
+
+        .btn-stack { display: flex; flex-direction: column; gap: 1rem; margin-top: auto; }
+        button { background: var(--accent); color: var(--accent-fg); border: none; padding: 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: transform 0.2s ease, opacity 0.2s ease; width: 100%; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        button.secondary:hover { background: #111; border-color: var(--border-hover); }
+
+        .error-msg { color: var(--error); margin-top: 0.8rem; font-size: 0.85rem; display: none; position: absolute; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="nav-brand">VOID.</a>
+        <a href="/about" class="nav-item">About</a>
+    </nav>
+
+    <div class="container">
+        <h1>Enter the Void.</h1>
+        <p class="subtitle">Secure, file-backed code sharing.</p>
+        
+        <div class="home-grid">
+            <div class="card">
+                <h3>New Workspace</h3>
+                <p class="card-desc">Initialize a new secure room for your codebase. Name it yourself or generate a random PIN.</p>
+                <div class="input-group">
+                    <input type="text" id="customRoomInput" placeholder="Custom Room ID (Optional)" autocomplete="off">
+                    <p id="createErrorMsg" class="error-msg">Room name already taken.</p>
+                </div>
+                <div class="btn-stack">
+                    <button onclick="createRoom()">Create Room</button>
+                    <button class="secondary" onclick="createRandomRoom()">Generate Random PIN</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Join Workspace</h3>
+                <p class="card-desc">Access an active environment by entering its unique identifier or 4-digit PIN.</p>
+                <div class="input-group">
+                    <input type="text" id="joinRoomInput" placeholder="Room ID or PIN" autocomplete="off">
+                    <p id="joinErrorMsg" class="error-msg">Room not found.</p>
+                </div>
+                <div class="btn-stack">
+                    <button class="secondary" onclick="joinRoom()">Access Room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function createRoom() {
+            const customId = document.getElementById('customRoomInput').value;
+            const res = await fetch('/api/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customId }) });
+            const data = await res.json();
+            if (data.success) window.location.href = `/room/${data.roomId}`;
+            else showError('createErrorMsg', data.message);
+        }
+
+        async function createRandomRoom() {
+            const res = await fetch('/api/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+            const data = await res.json();
+            if (data.success) window.location.href = `/room/${data.roomId}`;
+        }
+
+        async function joinRoom() {
+            const roomId = document.getElementById('joinRoomInput').value;
+            if (!roomId.trim()) return;
+            const res = await fetch('/api/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId }) });
+            const data = await res.json();
+            if (data.success) window.location.href = `/room/${roomId}`;
+            else showError('joinErrorMsg', 'Room not found.');
+        }
+
+        function showError(elementId, msg) {
+            const el = document.getElementById(elementId);
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
